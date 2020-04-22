@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.github.ollemuhr</groupId>
+	<artifactId>micro-play</artifactId>
+	<version>0-SNAPSHOT</version>
+
+	<properties>
+		<java.version>11</java.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<maven.compiler.release>${java.version}</maven.compiler.release>
+		<grpc.version>1.25.0</grpc.version>
+		<helidon.version>2.0.0-M2</helidon.version>
+		<scala.version>2.13.1</scala.version>
+		<scala.tools.version>2.13</scala.tools.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.helidon</groupId>
+				<artifactId>helidon-bom</artifactId>
+				<version>${helidon.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.helidon.grpc</groupId>
+			<artifactId>helidon-grpc-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.helidon.grpc</groupId>
+			<artifactId>helidon-grpc-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thesamet.scalapb</groupId>
+			<artifactId>scalapb-runtime_${scala.tools.version}</artifactId>
+			<version>0.10.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.thesamet.scalapb</groupId>
+			<artifactId>scalapb-runtime-grpc_${scala.tools.version}</artifactId>
+			<version>0.10.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_${scala.tools.version}</artifactId>
+			<version>3.1.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<extensions>
+			<extension>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>1.6.2</version>
+			</extension>
+		</extensions>
+		<plugins>
+<!--			Why doesn't this work?  -->
+			<!--			<plugin>-->
+			<!--				<groupId>com.github.os72</groupId>-->
+			<!--				<artifactId>protoc-jar-maven-plugin</artifactId>-->
+			<!--				<version>3.11.4</version>-->
+			<!--				<executions>-->
+			<!--					<execution>-->
+			<!--						<phase>generate-sources</phase>-->
+			<!--						<goals>-->
+			<!--							<goal>run</goal>-->
+			<!--						</goals>-->
+			<!--					</execution>-->
+			<!--				</executions>-->
+			<!--				<configuration>-->
+			<!--					<includeMavenTypes>transitive</includeMavenTypes>-->
+			<!--					<outputTargets>-->
+			<!--						<outputTarget>-->
+			<!--							<type>scalapb</type>-->
+			<!--							<outputOptions>grpc</outputOptions> &lt;!&ndash; more scalapb options can be added here &ndash;&gt;-->
+			<!--							<pluginArtifact>com.thesamet.scalapb:protoc-gen-scala:0.10.0:sh:unix</pluginArtifact>-->
+			<!--						</outputTarget>-->
+			<!--					</outputTargets>-->
+			<!--				</configuration>-->
+			<!--			</plugin>-->
+			<plugin>
+				<groupId>org.xolstice.maven.plugins</groupId>
+				<artifactId>protobuf-maven-plugin</artifactId>
+				<version>0.6.1</version>
+				<configuration>
+					<protocArtifact>com.google.protobuf:protoc:3.5.1-1:exe:${os.detected.classifier}</protocArtifact>
+					<pluginId>grpc-java</pluginId>
+					<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>compile</goal>
+							<goal>compile-custom</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>4.3.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<scalaCompatVersion>${scala.tools.version}</scalaCompatVersion>
+					<scalaVersion>${scala.version}</scalaVersion>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M4</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.scalatest</groupId>
+				<artifactId>scalatest-maven-plugin</artifactId>
+				<version>2.0.0</version>
+				<configuration>
+					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+					<junitxml>.</junitxml>
+					<filereports>WDF TestSuite.txt</filereports>
+				</configuration>
+				<executions>
+					<execution>
+						<id>test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.antipathy</groupId>
+				<artifactId>mvn-scalafmt_2.13</artifactId>
+				<version>1.0.3</version>
+				<configuration>
+					<configLocation>${project.basedir}/.scalafmt.conf</configLocation>
+					<sourceDirectories>
+						<param>${project.basedir}/src/main/scala</param>
+					</sourceDirectories>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,42 @@
+
+syntax = "proto3";
+option java_package = "com.github.ollemuhr.proto";
+
+service EmployeeService {
+//    rpc All (AllRequest) returns (stream Employee) {}
+    rpc ById (ByIdRequest) returns (Employee) {}
+//    rpc ByTitle (ByTitleRequest) returns (stream Employee) {}
+//    rpc ByDepartment (ByDepartmentRequest) returns (stream Employee) {}
+//    rpc ByLastName (ByLastNameRequest) returns (stream Employee) {}
+}
+
+//message AllRequest {
+//}
+
+message ByIdRequest {
+    string id = 1;
+}
+
+//message ByTitleRequest {
+//    string name = 1;
+//}
+//
+//message ByDepartmentRequest {
+//    string name = 1;
+//}
+//
+//message ByLastNameRequest {
+//    string name = 1;
+//}
+//
+message Employee {
+    string id = 1;
+    string firstName = 2;
+    string lastName = 3;
+    string email = 4;
+    string phone = 5;
+    string birthDate = 6;
+    string title = 7;
+    string department = 8;
+}
+
