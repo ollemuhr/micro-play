@@ -14,7 +14,7 @@
 		<maven.compiler.release>${java.version}</maven.compiler.release>
 		<grpc.version>1.25.0</grpc.version>
 		<helidon.version>2.0.0-M2</helidon.version>
-		<scala.version>2.13.1</scala.version>
+		<scala.version>2.13.9</scala.version>
 		<scala.tools.version>2.13</scala.tools.version>
 	</properties>
 
